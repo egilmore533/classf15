@@ -828,12 +828,24 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 void Weapon_Blaster_Fire (edict_t *ent)
 {
 	int		damage;
-
+	//add tempvec
+	vec3_t tempvec;
 	if (deathmatch->value)
 		damage = 15;
 	else
 		damage = 10;
 	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
+
+	//add 2nd bolt
+	VectorSet(tempvec, 0, 8, 0);
+	VectorAdd(tempvec, vec3_origin, tempvec);
+	Blaster_Fire (ent, tempvec, damage, false, EF_BLASTER);
+
+	//add 3rd bolt
+	VectorSet(tempvec, 0, -8, 0);
+	VectorAdd(tempvec, vec3_origin, tempvec);
+	Blaster_Fire (ent, tempvec, damage, false, EF_BLASTER);
+
 	ent->client->ps.gunframe++;
 }
 
@@ -872,22 +884,42 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 		}
 		else
 		{
-			rotation = (ent->client->ps.gunframe - 5) * 2*M_PI/6;
-			offset[0] = -4 * sin(rotation);
-			offset[1] = 0;
-			offset[2] = 4 * cos(rotation);
-
+			//moved to top
 			if ((ent->client->ps.gunframe == 6) || (ent->client->ps.gunframe == 9))
 				effect = EF_HYPERBLASTER;
 			else
 				effect = 0;
+			
+			//change ofset to 8 to spread out bullets
+			rotation = (ent->client->ps.gunframe - 5) * 2*M_PI/6;
+			offset[0] = 0;
+			offset[1] = -8 * sin(rotation);
+			offset[2] = 8 * cos(rotation);
+			Blaster_Fire (ent, offset, damage, true, effect);
+
+			//second bolt at a different point in guns rotation
+			rotation = (ent->client->ps.gunframe - 5) * 2*M_PI/6 + M_PI*2.0/3.0;
+			offset[0] = 0;
+			offset[1] = -8 * sin(rotation);
+			offset[2] = 8 * cos(rotation);
+			Blaster_Fire (ent, offset, damage, true, effect);
+
+			//third bolt at a DIFFERENT point in the rotation
+			rotation = (ent->client->ps.gunframe - 5) * 2*M_PI/6 + M_PI*4.0/3.0;
+			offset[0] = 0;
+			offset[1] = -8 * sin(rotation);
+			offset[2] = 8 * cos(rotation);
+			Blaster_Fire (ent, offset, damage, true, effect);
+
+
 			if (deathmatch->value)
 				damage = 15;
 			else
 				damage = 20;
-			Blaster_Fire (ent, offset, damage, true, effect);
+
+			//remove 3 times the ammo
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-				ent->client->pers.inventory[ent->client->ammo_index]--;
+				ent->client->pers.inventory[ent->client->ammo_index]-= ent->client->pers.weapon->quantity * 3;
 
 			ent->client->anim_priority = ANIM_ATTACK;
 			if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
