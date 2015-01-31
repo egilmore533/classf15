@@ -890,6 +890,11 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 			else
 				effect = 0;
 			
+			if (deathmatch->value)
+				damage = 15;
+			else
+				damage = 20;
+
 			//change ofset to 8 to spread out bullets
 			rotation = (ent->client->ps.gunframe - 5) * 2*M_PI/6;
 			offset[0] = 0;
@@ -910,12 +915,6 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 			offset[1] = -8 * sin(rotation);
 			offset[2] = 8 * cos(rotation);
 			Blaster_Fire (ent, offset, damage, true, effect);
-
-
-			if (deathmatch->value)
-				damage = 15;
-			else
-				damage = 20;
 
 			//remove 3 times the ammo
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
