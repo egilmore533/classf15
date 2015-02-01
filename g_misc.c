@@ -1857,3 +1857,37 @@ void SP_misc_teleporter_dest (edict_t *ent)
 	gi.linkentity (ent);
 }
 
+//to add chunks to the vomit feature
+void ThrowVomit(edict_t *ent, vec3_t mouth_pos, vec3_t forward, vec3_t right, vec3_t player_vel)
+{
+	edict_t *gib;
+
+	gib = G_Spawn();
+
+	gi.setmodel (gib, "models/objects/gibs/sm_meat/tris.md2");
+
+	gib->solid = SOLID_NOT;
+	gib->s.effects |= EF_GIB;
+	gib->flags |= FL_NO_KNOCKBACK;
+	gib->takedamage = DAMAGE_YES;
+	gib->die = gib_die;
+
+	gib->movetype = MOVETYPE_TOSS;
+	gib->touch = gib_touch;
+
+	VectorCopy (mouth_pos, gib->s.origin);
+	VectorScale (forward, 120 + crandom()*40, gib->velocity);
+	VectorAdd (player_vel, gib->velocity, gib->velocity);
+
+	VectorScale (right, crandom()*20, right);
+	VectorAdd (right, gib->velocity, gib->velocity);
+
+	gib->avelocity[0] = random()*600;
+	gib->avelocity[1] = random()*600;
+	gib->avelocity[2] = random()*600;
+
+	gib->think = G_FreeEdict;
+	gib->nextthink = level.time + 10 + random()*10;
+
+	gi.linkentity (gib);
+}
