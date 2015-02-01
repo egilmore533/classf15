@@ -598,6 +598,55 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	G_FreeEdict (ent);
 }
 
+//function for homing missles
+void homing_think(edict_t *ent)
+{
+	edict_t *target = NULL;
+	edict_t *blip = NULL;
+	vec3_t targetdir, blipdir;
+	vec_t speed;
+
+	while((blip = findradius(blip, ent->s.origin, 1000)) != NULL)
+	{
+		if (!(blip->svflags & SVF_MONSTER) && !blip->client)
+			continue;
+		if(blip == ent->owner)
+			continue;
+		if(!blip->takedamage)
+			continue;
+		if (blip->health <= 0)
+			continue;
+		if (!visible(ent, blip))
+			continue;
+		if (!infront(ent, blip))
+			continue;
+		VectorSubtract(blip->s.origin, ent->s.origin, blipdir);
+		blipdir[2] += 16;
+
+		if ((target == NULL) || (VectorLength(blipdir) < VectorLength(targetdir)))
+		{
+			target = blip;
+			VectorCopy(blipdir, targetdir);
+		}
+	}//end of while
+
+	if (target != NULL)
+	{
+		//target found so move towards it
+		VectorNormalize(targetdir);
+		VectorScale(targetdir, 0.2, targetdir);
+		VectorAdd(targetdir, ent->movedir, targetdir);
+		VectorNormalize(targetdir);
+		VectorCopy(targetdir, ent->movedir);
+		vectoangles(targetdir, ent->s.angles);
+		speed = VectorLength(ent->velocity);
+		VectorScale(targetdir, speed, ent->velocity);
+
+	}
+
+	ent->nextthink = level.time + .1;
+}
+
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
 {
 	edict_t	*rocket;
@@ -616,8 +665,33 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	rocket->owner = self;
 	rocket->touch = rocket_touch;
-	rocket->nextthink = level.time + 8000/speed;
-	rocket->think = G_FreeEdict;
+	
+	//check if player has homing on
+	if (self->client && self->client->pers.homing_state)
+	{
+		//check if player has 5 or more rockets to spend
+		if (self->client->pers.inventory[ITEM_INDEX(FindItem("Cells"))] >= 5)
+		{
+			self->client->pers.inventory[ITEM_INDEX(FindItem("Cells"))] -= 5;
+			rocket->nextthink = level.time + .1;
+			rocket->think = homing_think;
+		}
+
+		//if not fire normally
+		else
+		{
+			gi.cprintf(self, PRINT_HIGH, "No cells for homing missile.\n");
+			rocket->nextthink = level.time + 8000/speed;
+			rocket->think = G_FreeEdict;
+		}
+	}
+	else
+	{
+		gi.cprintf(self, PRINT_HIGH, "CUNT\n")
+		rocket->nextthink = level.time + 8000/speed;
+		rocket->think = G_FreeEdict;
+	}
+
 	rocket->dmg = damage;
 	rocket->radius_dmg = radius_damage;
 	rocket->dmg_radius = damage_radius;

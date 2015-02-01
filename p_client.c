@@ -607,6 +607,9 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_cells		= 200;
 	client->pers.max_slugs		= 50;
 
+	//homing_state initialized to off
+	client->pers.homing_state = 0;
+
 	client->pers.connected = true;
 }
 

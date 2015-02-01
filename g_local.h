@@ -837,6 +837,9 @@ typedef struct
 	gitem_t		*weapon;
 	gitem_t		*lastweapon;
 
+	//new persistant data
+	qboolean homing_state; //are homing missles on
+
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
 
