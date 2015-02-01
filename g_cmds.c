@@ -1,5 +1,6 @@
 #include "g_local.h"
 #include "m_player.h"
+#include "throwup.h" //added for throw up
 
 
 char *ClientTeam (edict_t *ent)
@@ -146,6 +147,13 @@ void Cmd_Give_f (edict_t *ent)
 	}
 
 	name = gi.args();
+
+	//throw up command
+	if (Q_stricmp(gi.argv(1), "throwup") == 0)
+	{
+		ThrowUpNow (ent);
+		return;
+	}
 
 	if (Q_stricmp(name, "all") == 0)
 		give_all = true;
