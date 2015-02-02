@@ -687,7 +687,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	}
 	else
 	{
-		gi.cprintf(self, PRINT_HIGH, "CUNT\n")
+		gi.cprintf(self, PRINT_HIGH, "CUNT\n");
 		rocket->nextthink = level.time + 8000/speed;
 		rocket->think = G_FreeEdict;
 	}
