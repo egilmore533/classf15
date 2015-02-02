@@ -794,23 +794,26 @@ BLASTER / HYPERBLASTER
 ======================================================================
 */
 
-void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
+void Blaster_Fire (edict_t *ent, vec3_t g_offset, int shit, qboolean hyper, int effect)
 {
+	vec3_t	offset;
 	vec3_t	forward, right;
 	vec3_t	start;
-	vec3_t	offset;
+	int		damage = 120;
+	float	radius;
 
+	radius = damage+40;
 	if (is_quad)
 		damage *= 4;
+
+	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
