@@ -492,6 +492,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	vec3_t	dir;
 	vec3_t	forward, right, up;
 
+
 	vectoangles (aimdir, dir);
 	AngleVectors (dir, forward, right, up);
 
