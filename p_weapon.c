@@ -832,6 +832,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 {
 	int		damage;
 
+
 	if (deathmatch->value)
 		damage = 15;
 	else
