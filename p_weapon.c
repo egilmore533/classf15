@@ -754,6 +754,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	float		damage_radius;
 	int			radius_damage;
 	gclient_t	*client;
+	int			i_foward;
 
 	client = ent->client;
 
@@ -771,9 +772,25 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	//titan mode rocket behavior
+	if (client->pers.titanMode)
+	{
+		for (i_foward = 0; i_foward < 8; i_foward++)
+		{
+			VectorSet(offset, (0 + i_foward * 40), -8, ent->viewheight-8);
+			P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+			fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+		}
+	}
+
+	//normal rocket behavior
+	else
+	{
+		VectorSet(offset, 8, 8, ent->viewheight-8);
+		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+		fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+
+	}
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1304,6 +1321,7 @@ void weapon_railgun_fire (edict_t *ent)
 	int			damage;
 	int			kick;
 	gclient_t	*client;
+	int			i;
 
 	client = ent->client;
 
@@ -1329,9 +1347,21 @@ void weapon_railgun_fire (edict_t *ent)
 	VectorScale (forward, -3, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -3;
 
+	if (client->pers.titanMode)
+	{
+		for (i = 0; i < 3; i++)
+		{
+			VectorSet(offset, 0, -30 + i * 30, ent->viewheight-8);
+			P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+			fire_rail (ent, start, forward, damage, kick);
+		}
+	}
+
+	else{
 	VectorSet(offset, 0, 7,  ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rail (ent, start, forward, damage, kick);
+	}
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);

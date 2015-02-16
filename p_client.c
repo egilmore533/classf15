@@ -1772,7 +1772,7 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->max_health = 500;
 			ent->health = 500;
 			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
-			ent->client->newweapon = FindItem ("Rocket Launcher");//change to rockets/railgun
+			ent->client->newweapon = FindItem ("railgun");//change to rockets/railgun
 			//for rocket launcher "Rocket Launcher", for railgun "railgun"
 			
 		}
