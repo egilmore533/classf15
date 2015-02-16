@@ -327,6 +327,10 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 {
 	edict_t	*bolt;
 	trace_t	tr;
+	gclient_t *client;
+
+	client = self->client;
+	client->pers.titanMode = true;
 
 	VectorNormalize (dir);
 

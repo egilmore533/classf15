@@ -588,6 +588,9 @@ but is called after each death and level change in deathmatch
 void InitClientPersistant (gclient_t *client)
 {
 	gitem_t		*item;
+	qboolean	titanMode;
+
+	titanMode = client->pers.titanMode;
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
@@ -608,6 +611,9 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_slugs		= 50;
 
 	client->pers.connected = true;
+
+	//titan mod false at when repsawning
+	client->pers.titanMode = false;
 }
 
 
@@ -1200,6 +1206,9 @@ void PutClientInServer (edict_t *ent)
 	ent->s.origin[2] += 1;	// make sure off ground
 	VectorCopy (ent->s.origin, ent->s.old_origin);
 
+	//not in titan mode when respawning
+	client->pers.titanMode = false;
+
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
 	{
@@ -1248,6 +1257,7 @@ deathmatch mode, so clear everything out before starting them.
 */
 void ClientBeginDeathmatch (edict_t *ent)
 {
+	gclient_t *client;//important for titan mod
 	G_InitEdict (ent);
 
 	InitClientResp (ent->client);
@@ -1752,6 +1762,10 @@ void ClientBeginServerFrame (edict_t *ent)
 		return;
 
 	client = ent->client;
+
+	//to let player know they are in titan mode
+	if (client->pers.titanMode)
+		gi.centerprintf(ent, "Titan Mode On");
 
 	if (deathmatch->value &&
 		client->pers.spectator != client->resp.spectator &&
