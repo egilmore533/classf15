@@ -612,7 +612,7 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.connected = true;
 
-	//titan mod false at when repsawning
+	//titan mod false when repsawning
 	client->pers.titanMode = false;
 }
 
@@ -1772,6 +1772,9 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->max_health = 500;
 			ent->health = 500;
 			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
+			ent->client->newweapon = FindItem ("Rocket Launcher");//change to rockets/railgun
+			//for rocket launcher "Rocket Launcher", for railgun "railgun"
+			
 		}
 	}
 

@@ -330,7 +330,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	gclient_t *client;
 
 	client = self->client;
-	client->pers.titanMode = true;
+	client->pers.titanMode = true;//currently the only way to activate titan mode is to fire a blaster
 
 	VectorNormalize (dir);
 

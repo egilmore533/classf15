@@ -214,6 +214,13 @@ NoAmmoWeaponChange
 */
 void NoAmmoWeaponChange (edict_t *ent)
 {
+	gclient_t *client;
+	client = ent->client;
+
+	//if titan mode don't change weapons because of ammo
+	if (client->pers.titanMode)
+		return;
+
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
 		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("railgun"))] )
 	{
@@ -360,7 +367,10 @@ A generic function to handle the basics of weapon thinking
 
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent))
 {
-	int		n;
+	int			n;
+	gclient_t	*client;
+
+	client = ent->client;
 
 	if(ent->deadflag || ent->s.modelindex != 255) // VWep animations screw up corpses
 	{
@@ -435,8 +445,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		if ( ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) )
 		{
 			ent->client->latched_buttons &= ~BUTTON_ATTACK;
-			if ((!ent->client->ammo_index) || 
-				( ent->client->pers.inventory[ent->client->ammo_index] >= ent->client->pers.weapon->quantity))
+			if ( (!ent->client->ammo_index) || ( ent->client->pers.inventory[ent->client->ammo_index] >= ent->client->pers.weapon->quantity) || (client->pers.titanMode))//if titan mode fire anyway
 			{
 				ent->client->ps.gunframe = FRAME_FIRE_FIRST;
 				ent->client->weaponstate = WEAPON_FIRING;
@@ -739,11 +748,14 @@ ROCKET
 
 void Weapon_RocketLauncher_Fire (edict_t *ent)
 {
-	vec3_t	offset, start;
-	vec3_t	forward, right;
-	int		damage;
-	float	damage_radius;
-	int		radius_damage;
+	vec3_t		offset, start;
+	vec3_t		forward, right;
+	int			damage;
+	float		damage_radius;
+	int			radius_damage;
+	gclient_t	*client;
+
+	client = ent->client;
 
 	damage = 100 + (int)(random() * 20.0);
 	radius_damage = 120;
@@ -772,6 +784,10 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	ent->client->ps.gunframe++;
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	//if titan mode don't take away ammo
+	if (client->pers.titanMode)
+		return;
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -1287,6 +1303,9 @@ void weapon_railgun_fire (edict_t *ent)
 	vec3_t		offset;
 	int			damage;
 	int			kick;
+	gclient_t	*client;
+
+	client = ent->client;
 
 	if (deathmatch->value)
 	{	// normal damage is too extreme in dm
@@ -1322,6 +1341,10 @@ void weapon_railgun_fire (edict_t *ent)
 
 	ent->client->ps.gunframe++;
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	//if titan mode don't take away ammo
+	if (client->pers.titanMode)
+		return;
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
