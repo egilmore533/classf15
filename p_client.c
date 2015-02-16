@@ -1763,9 +1763,17 @@ void ClientBeginServerFrame (edict_t *ent)
 
 	client = ent->client;
 
-	//to let player know they are in titan mode
+	//to let player know they are in titan mode and add attributes
+	//only happens if player has less than 500 max health
 	if (client->pers.titanMode)
-		gi.centerprintf(ent, "Titan Mode On");
+	{
+		if (ent->max_health != 500)
+		{
+			ent->max_health = 500;
+			ent->health = 500;
+			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
+		}
+	}
 
 	if (deathmatch->value &&
 		client->pers.spectator != client->resp.spectator &&
