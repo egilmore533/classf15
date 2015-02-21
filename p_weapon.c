@@ -467,7 +467,9 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			{
 				if (level.time >= ent->pain_debounce_time)
 				{
-					gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+					if (!(client->pers.perkSilent))//don't play sound if silent perk is on
+						gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+					
 					ent->pain_debounce_time = level.time + 1;
 				}
 				NoAmmoWeaponChange (ent);
@@ -612,7 +614,9 @@ void Weapon_Grenade (edict_t *ent)
 			{
 				if (level.time >= ent->pain_debounce_time)
 				{
-					gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+					if (!(ent->client->pers.perkSilent))//don't play sound if silent perk is on
+						gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+					
 					ent->pain_debounce_time = level.time + 1;
 				}
 				NoAmmoWeaponChange (ent);
@@ -898,7 +902,9 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 		{
 			if (level.time >= ent->pain_debounce_time)
 			{
-				gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+				if (!(ent->client->pers.perkSilent))
+					gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+				
 				ent->pain_debounce_time = level.time + 1;
 			}
 			NoAmmoWeaponChange (ent);
@@ -991,7 +997,9 @@ void Machinegun_Fire (edict_t *ent)
 		ent->client->ps.gunframe = 6;
 		if (level.time >= ent->pain_debounce_time)
 		{
-			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			if (!(ent->client->pers.perkSilent))
+				gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			
 			ent->pain_debounce_time = level.time + 1;
 		}
 		NoAmmoWeaponChange (ent);
@@ -1134,7 +1142,9 @@ void Chaingun_Fire (edict_t *ent)
 	{
 		if (level.time >= ent->pain_debounce_time)
 		{
-			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			if (!(ent->client->pers.perkSilent))
+				gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			
 			ent->pain_debounce_time = level.time + 1;
 		}
 		NoAmmoWeaponChange (ent);

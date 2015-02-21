@@ -614,6 +614,8 @@ void InitClientPersistant (gclient_t *client)
 
 	//titan mod false when repsawning
 	client->pers.titanMode = false;
+	client->pers.perkHardline = false;
+	client->pers.perkSilent = false;
 }
 
 
@@ -1208,6 +1210,8 @@ void PutClientInServer (edict_t *ent)
 
 	//not in titan mode when respawning
 	client->pers.titanMode = false;
+	client->pers.perkHardline = false;
+	client->pers.perkSilent = false;
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
@@ -1650,7 +1654,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->resp.cmd_angles[1] = SHORT2ANGLE(ucmd->angles[1]);
 		client->resp.cmd_angles[2] = SHORT2ANGLE(ucmd->angles[2]);
 
-		if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0))
+		if (ent->groundentity && !pm.groundentity && (pm.cmd.upmove >= 10) && (pm.waterlevel == 0) && !(client->pers.perkSilent))//added silent perk ability to make quiet jumps
 		{
 			gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
@@ -1743,9 +1747,20 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			UpdateChaseCam(other);
 	}
 
-	if(client->resp.score >= 5)
+	
+	if (client->pers.perkHardline)
 	{
-		client->pers.titanMode = true;
+		if(client->resp.score >= 4)
+		{
+			client->pers.titanMode = true;
+		}
+	}
+	else
+	{
+		if(client->resp.score >= 5)
+		{
+			client->pers.titanMode = true;
+		}
 	}
 }
 

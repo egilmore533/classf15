@@ -111,7 +111,7 @@ void P_DamageFeedback (edict_t *player)
 		count = 10;	// always make a visible effect
 
 	// play an apropriate pain sound
-	if ((level.time > player->pain_debounce_time) && !(player->flags & FL_GODMODE) && (client->invincible_framenum <= level.framenum))
+	if ((level.time > player->pain_debounce_time) && !(player->flags & FL_GODMODE) && (client->invincible_framenum <= level.framenum) && !(client->pers.perkSilent))//silent perk stops character from shouting in pain
 	{
 		r = 1 + (rand()&1);
 		player->pain_debounce_time = level.time + 0.7;
@@ -579,7 +579,7 @@ void P_WorldEffects (void)
 	//
 	// if just entered a water volume, play a sound
 	//
-	if (!old_waterlevel && waterlevel)
+	if (!old_waterlevel && waterlevel && !(current_player->client->pers.perkSilent))//no noise entering water if silent perk is on
 	{
 		PlayerNoise(current_player, current_player->s.origin, PNOISE_SELF);
 		if (current_player->watertype & CONTENTS_LAVA)
@@ -597,7 +597,7 @@ void P_WorldEffects (void)
 	//
 	// if just completely exited a water volume, play a sound
 	//
-	if (old_waterlevel && ! waterlevel)
+	if (old_waterlevel && ! waterlevel && !(current_player->client->pers.perkSilent))//no noise coming out of water if silent perk is on
 	{
 		PlayerNoise(current_player, current_player->s.origin, PNOISE_SELF);
 		gi.sound (current_player, CHAN_BODY, gi.soundindex("player/watr_out.wav"), 1, ATTN_NORM, 0);
@@ -607,7 +607,7 @@ void P_WorldEffects (void)
 	//
 	// check for head just going under water
 	//
-	if (old_waterlevel != 3 && waterlevel == 3)
+	if (old_waterlevel != 3 && waterlevel == 3 && !(current_player->client->pers.perkSilent))//no noise going under water if silent perk is on)
 	{
 		gi.sound (current_player, CHAN_BODY, gi.soundindex("player/watr_un.wav"), 1, ATTN_NORM, 0);
 	}
@@ -615,7 +615,7 @@ void P_WorldEffects (void)
 	//
 	// check for head just coming out of water
 	//
-	if (old_waterlevel == 3 && waterlevel != 3)
+	if (old_waterlevel == 3 && waterlevel != 3 && !(current_player->client->pers.perkSilent))//no noise coming out of water if silent perk is on)
 	{
 		if (current_player->air_finished < level.time)
 		{	// gasp for air
@@ -631,7 +631,7 @@ void P_WorldEffects (void)
 	//
 	// check for drowning
 	//
-	if (waterlevel == 3)
+	if (waterlevel == 3)//still hear drowning if silent perk is on
 	{
 		// breather or envirosuit give air
 		if (breather || envirosuit)

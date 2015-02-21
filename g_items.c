@@ -165,6 +165,50 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 	return true;
 }
 
+/*
+===================================================
+perk pick ups
+===================================================
+*/
+qboolean Pickup_PerkHardline (edict_t *ent, edict_t *other)//allows the player to unlock titan mode after only 4 kills, lost after death
+{
+
+	//just in case
+	if(!ent) 
+		return false;
+	if(!other)
+		return false;
+
+	if (other->client->pers.perkHardline)
+		return false;
+	else
+	{
+		other->client->pers.perkHardline = true;
+		SetRespawn (ent, 60);
+		return true;
+	}
+}
+
+qboolean Pickup_PerkSilent (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
+{
+
+	//just in case
+	if(!ent) 
+		return false;
+	if(!other)
+		return false;
+
+	if (other->client->pers.perkSilent)
+		return false;
+	else
+	{
+		other->client->pers.perkSilent = true;
+		SetRespawn (ent, 45);
+		return true;
+	}
+}
+
+
 void Drop_General (edict_t *ent, gitem_t *item)
 {
 	Drop_Item (ent, item);
@@ -766,20 +810,23 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 		if (ent->item->use)
 			other->client->pers.selected_item = other->client->ps.stats[STAT_SELECTED_ITEM] = ITEM_INDEX(ent->item);
 
-		if (ent->item->pickup == Pickup_Health)
+		if (!(other->client->pers.perkSilent))
 		{
-			if (ent->count == 2)
-				gi.sound(other, CHAN_ITEM, gi.soundindex("items/s_health.wav"), 1, ATTN_NORM, 0);
-			else if (ent->count == 10)
-				gi.sound(other, CHAN_ITEM, gi.soundindex("items/n_health.wav"), 1, ATTN_NORM, 0);
-			else if (ent->count == 25)
-				gi.sound(other, CHAN_ITEM, gi.soundindex("items/l_health.wav"), 1, ATTN_NORM, 0);
-			else // (ent->count == 100)
-				gi.sound(other, CHAN_ITEM, gi.soundindex("items/m_health.wav"), 1, ATTN_NORM, 0);
-		}
-		else if (ent->item->pickup_sound)
-		{
-			gi.sound(other, CHAN_ITEM, gi.soundindex(ent->item->pickup_sound), 1, ATTN_NORM, 0);
+			if (ent->item->pickup == Pickup_Health)
+			{
+				if (ent->count == 2)
+					gi.sound(other, CHAN_ITEM, gi.soundindex("items/s_health.wav"), 1, ATTN_NORM, 0);
+				else if (ent->count == 10)
+					gi.sound(other, CHAN_ITEM, gi.soundindex("items/n_health.wav"), 1, ATTN_NORM, 0);
+				else if (ent->count == 25)
+					gi.sound(other, CHAN_ITEM, gi.soundindex("items/l_health.wav"), 1, ATTN_NORM, 0);
+				else // (ent->count == 100)
+					gi.sound(other, CHAN_ITEM, gi.soundindex("items/m_health.wav"), 1, ATTN_NORM, 0);
+			}
+			else if (ent->item->pickup_sound)
+			{
+				gi.sound(other, CHAN_ITEM, gi.soundindex(ent->item->pickup_sound), 1, ATTN_NORM, 0);
+			}
 		}
 	}
 
@@ -1647,15 +1694,15 @@ always owned, never in the world
 */
 	{
 		"item_quad", 
-		Pickup_Powerup,
-		Use_Quad,
+		Pickup_PerkHardline,//changed
+		NULL,//changed
 		Drop_General,
 		NULL,
 		"items/pkup.wav",
 		"models/items/quaddama/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"p_quad",
-/* pickup */	"Quad Damage",
+/* pickup */	"Hardline",
 /* width */		2,
 		60,
 		NULL,
@@ -1833,7 +1880,7 @@ gives +1 to maximum health
 */
 	{
 		"item_pack",
-		Pickup_Pack,
+		Pickup_PerkSilent,//changed, to silent perk pick up
 		NULL,
 		NULL,
 		NULL,
@@ -1841,7 +1888,7 @@ gives +1 to maximum health
 		"models/items/pack/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_pack",
-/* pickup */	"Ammo Pack",
+/* pickup */	"Silent",//changed to display Silent instead of ammo pack
 /* width */		2,
 		180,
 		NULL,
