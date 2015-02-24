@@ -588,9 +588,9 @@ but is called after each death and level change in deathmatch
 void InitClientPersistant (gclient_t *client)
 {
 	gitem_t		*item;
-	qboolean	titanMode;
+	int			killCounter;
 
-	titanMode = client->pers.titanMode;
+	killCounter = client->resp.score;
 
 	memset (&client->pers, 0, sizeof(client->pers));
 
@@ -612,10 +612,12 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.connected = true;
 
-	//titan mod false when repsawning
+	//titan mode and perks off when repsawning
 	client->pers.titanMode = false;
 	client->pers.perkHardline = false;
 	client->pers.perkSilent = false;
+
+	client->pers.killCount = killCounter;// save how many kills you had when you respawned
 }
 
 
@@ -1208,10 +1210,12 @@ void PutClientInServer (edict_t *ent)
 	ent->s.origin[2] += 1;	// make sure off ground
 	VectorCopy (ent->s.origin, ent->s.old_origin);
 
-	//not in titan mode when respawning
+	// titan mode and perks off when respawning
 	client->pers.titanMode = false;
 	client->pers.perkHardline = false;
 	client->pers.perkSilent = false;
+
+	client->pers.killCount = client->resp.score;//set to number of kills when the player respawned
 
 	// set the delta angle
 	for (i=0 ; i<3 ; i++)
@@ -1750,16 +1754,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	
 	if (client->pers.perkHardline)
 	{
-		if(client->resp.score >= 4)
+		if((client->resp.score - client->pers.killCount) >= 4)//if the player's score is 4 or more than it was when they spawned/respwaned
 		{
-			client->pers.titanMode = true;
+			client->pers.titanMode = true;//then activate titan mode
 		}
 	}
 	else
 	{
-		if(client->resp.score >= 5)
+		if((client->resp.score - client->pers.killCount) >= 5)//if the player's score is 5 or more than it was when they spawned/respwaned
 		{
-			client->pers.titanMode = true;
+			client->pers.titanMode = true;//then activate titan mode
 		}
 	}
 }
@@ -1792,8 +1796,11 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->max_health = 500;
 			ent->health = 500;
 			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
-			ent->client->newweapon = FindItem ("railgun");//change to rockets/railgun
+			ent->client->newweapon = FindItem ("Rocket Launcher");//change to rockets/railgun
 			//for rocket launcher "Rocket Launcher", for railgun "railgun"
+			ent->client->pers.inventory[ent->client->ammo_index] = 10;
+			ent->client->newweapon = FindItem ("railgun");
+			ent->client->pers.inventory[ent->client->ammo_index] = 10;
 			
 		}
 	}

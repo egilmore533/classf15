@@ -846,6 +846,8 @@ typedef struct
 	qboolean	spectator;			// client is a spectator
 
 	qboolean	titanMode;//reward for getting a certain number of kills, health boost and weapon upgrades
+	int			killCount;//used to keep track of current kill streak
+
 	qboolean	perkHardline;//allows the player to gain titanMode with only 4 kills
 	qboolean	perkSilent;//makes the player quieter during gameplay, basically the player is in sneak mode until they die
 

@@ -1363,7 +1363,7 @@ void weapon_railgun_fire (edict_t *ent)
 		{
 			VectorSet(offset, 0, -30 + i * 30, ent->viewheight-8);
 			P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-			fire_rail (ent, start, forward, damage, kick);
+			fire_rail (ent, start, forward, 200, kick);//higher damage for titan Mode
 		}
 	}
 
