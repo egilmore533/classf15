@@ -1779,6 +1779,8 @@ void ClientBeginServerFrame (edict_t *ent)
 			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
 			ent->client->newweapon = FindItem ("railgun");//change to rockets/railgun
 			//for rocket launcher "Rocket Launcher", for railgun "railgun"
+
+			ent->s.modelindex = gi.modelindex ("models/monsters/soldier/tris.md2");
 			
 		}
 	}
