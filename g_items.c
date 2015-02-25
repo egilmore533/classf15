@@ -208,6 +208,25 @@ qboolean Pickup_PerkSilent (edict_t *ent, edict_t *other)//player makes less noi
 	}
 }
 
+qboolean Pickup_PerkSteady (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
+{
+
+	//just in case
+	if(!ent) 
+		return false;
+	if(!other)
+		return false;
+
+	if (other->client->pers.perkSteady)
+		return false;
+	else
+	{
+		other->client->pers.perkSteady = true;
+		SetRespawn (ent, 30);
+		return true;
+	}
+}
+
 
 void Drop_General (edict_t *ent, gitem_t *item)
 {
@@ -1857,7 +1876,7 @@ gives +1 to maximum health
 */
 	{
 		"item_bandolier",
-		Pickup_Bandolier,
+		Pickup_PerkSteady,
 		NULL,
 		NULL,
 		NULL,
@@ -1865,7 +1884,7 @@ gives +1 to maximum health
 		"models/items/band/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"p_bandolier",
-/* pickup */	"Bandolier",
+/* pickup */	"Steady",
 /* width */		2,
 		60,
 		NULL,

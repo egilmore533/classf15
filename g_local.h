@@ -850,6 +850,7 @@ typedef struct
 
 	qboolean	perkHardline;//allows the player to gain titanMode with only 4 kills
 	qboolean	perkSilent;//makes the player quieter during gameplay, basically the player is in sneak mode until they die
+	qboolean	perkSteady;
 
 } client_persistant_t;
 
