@@ -757,10 +757,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	int			damage;
 	float		damage_radius;
 	int			radius_damage;
-	gclient_t	*client;
 	int			i_foward;
-
-	client = ent->client;
 
 	damage = 100 + (int)(random() * 20.0);
 	radius_damage = 120;
@@ -777,7 +774,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	ent->client->kick_angles[0] = -1;
 
 	//titan mode rocket behavior
-	if (client->pers.titanMode)
+	if (ent->client->pers.titanMode)
 	{
 		for (i_foward = 0; i_foward < 8; i_foward++)
 		{
@@ -807,7 +804,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	//if titan mode don't take away ammo
-	if (client->pers.titanMode)
+	if (ent->client->pers.titanMode)
 		return;
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
@@ -979,6 +976,8 @@ void Machinegun_Fire (edict_t *ent)
 	int			damage = 8;
 	int			kick = 2;
 	vec3_t		offset;
+	int			hspread = 300;//for steady perk
+	int			vspread = 500;//for steady perk
 
 	if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
@@ -1012,6 +1011,13 @@ void Machinegun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	if (ent->client->pers.perkSteady)//if steady perk, half the kick and spread
+	{
+		kick /= 2;
+		hspread /= 2;
+		vspread /= 2;
+	}
+
 	for (i=1 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
@@ -1033,7 +1039,7 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	fire_bullet (ent, start, forward, damage, kick, hspread, vspread, MOD_MACHINEGUN);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1076,6 +1082,8 @@ void Chaingun_Fire (edict_t *ent)
 	vec3_t		offset;
 	int			damage;
 	int			kick = 2;
+	int			hspread = 300;//for steady perk
+	int			vspread = 500;//for steady perk
 
 	if (deathmatch->value)
 		damage = 6;
@@ -1157,6 +1165,13 @@ void Chaingun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	if (ent->client->pers.perkSteady)//if kick perk, then decrease the kick and spread
+	{
+		kick /= 2;
+		hspread /= 2;
+		vspread /= 2;
+	}
+
 	for (i=0 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
@@ -1172,7 +1187,7 @@ void Chaingun_Fire (edict_t *ent)
 		VectorSet(offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		fire_bullet (ent, start, forward, damage, kick, hspread, vspread, MOD_CHAINGUN);
 	}
 
 	// send muzzle flash
@@ -1212,6 +1227,8 @@ void weapon_shotgun_fire (edict_t *ent)
 	vec3_t		offset;
 	int			damage = 4;
 	int			kick = 8;
+	int			hspread = 500;//for steady perk
+	int			vspread = 500;//for steady perk
 
 	if (ent->client->ps.gunframe == 9)
 	{
@@ -1233,10 +1250,17 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	if(ent->client->pers.perkSteady)//if kick perk, then decrease the kick and spread
+	{
+		kick /= 2;
+		hspread /= 2;
+		vspread /= 2;
+	}
+
 	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, damage, kick, hspread, vspread, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
 	else
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, damage, kick, hspread, vspread, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1268,6 +1292,8 @@ void weapon_supershotgun_fire (edict_t *ent)
 	vec3_t		v;
 	int			damage = 6;
 	int			kick = 12;
+	int			hspread = 1000;//for steady perk
+	int			vspread = 500;//for steady perk
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
@@ -1283,14 +1309,21 @@ void weapon_supershotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	if(ent->client->pers.perkSteady)//if kick perk, then decrease the kick and spread
+	{
+		kick /= 2;
+		hspread /= 2;
+		vspread /= 2;
+	}
+
 	v[PITCH] = ent->client->v_angle[PITCH];
 	v[YAW]   = ent->client->v_angle[YAW] - 5;
 	v[ROLL]  = ent->client->v_angle[ROLL];
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	fire_shotgun (ent, start, forward, damage, kick, hspread, vspread, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	fire_shotgun (ent, start, forward, damage, kick, hspread, vspread, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1330,10 +1363,7 @@ void weapon_railgun_fire (edict_t *ent)
 	vec3_t		offset;
 	int			damage;
 	int			kick;
-	gclient_t	*client;
 	int			i;
-
-	client = ent->client;
 
 	if (deathmatch->value)
 	{	// normal damage is too extreme in dm
@@ -1357,7 +1387,7 @@ void weapon_railgun_fire (edict_t *ent)
 	VectorScale (forward, -3, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -3;
 
-	if (client->pers.titanMode)
+	if (ent->client->pers.titanMode)
 	{
 		for (i = 0; i < 3; i++)
 		{
@@ -1383,7 +1413,7 @@ void weapon_railgun_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	//if titan mode don't take away ammo
-	if (client->pers.titanMode)
+	if (ent->client->pers.titanMode)
 		return;
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )

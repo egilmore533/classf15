@@ -167,10 +167,10 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 
 /*
 ===================================================
-perk pick ups
+perk pick up functions
 ===================================================
 */
-qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to unlock titan mode after only 4 kills, lost after death
+qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk to gve player
 {
 	float		decision;
 
@@ -181,7 +181,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to 
 		return false;
 
 
-	if (other->client->pers.perkHardline && other->client->pers.perkSilent && other->client->pers.perkSteady)
+	if (other->client->pers.perkHardline && other->client->pers.perkSilent && other->client->pers.perkSteady)//check if player has all perks
 	{
 		gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");
 		return false;//if no perks left to take, don't pick it up
@@ -189,16 +189,17 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to 
 
 	while (true)//repeats until a perk is added
 	{
-		decision = crandom();
+		decision = crandom();//random number between 0 and 1
 
 		if(decision <= .2)
 		{
-			if (other->client->pers.perkHardline)
-				decision += .19;
-			else
+			if (other->client->pers.perkHardline)//if Hardline on, restart the loop
+				continue;
+
+			else//add Hardline perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkHardline = true;
-				SetRespawn (ent, 1);
+				SetRespawn (ent, 60);
 				gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
 				return true;
 			}
@@ -206,9 +207,10 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to 
 
 		if(decision >= .2 && decision < .4)
 		{
-			if (other->client->pers.perkSilent)
-				decision += .19;
-			else
+			if (other->client->pers.perkSilent)//if Silent on, restart the loop
+				continue;
+
+			else//add Silent perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkSilent = true;
 				SetRespawn (ent, 1);
@@ -220,9 +222,10 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to 
 	
 		if(decision >= .4 && decision < .6)
 		{
-			if (other->client->pers.perkSteady)
-				decision += .19;
-			else
+			if (other->client->pers.perkSteady)//if Steady on, restart the loop
+				continue;
+			
+			else//add Steady perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkSteady = true;
 				SetRespawn (ent, 1);
@@ -233,26 +236,12 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to 
 
 		if (decision > .6 && decision < .8)//place holder for next perk
 		{
-			/*if (other->client->pers.perkSteady)
-				decision += .19;
-			else
-			{
-				other->client->pers.perkSteady = true;
-				SetRespawn (ent, 45);
-				return true;
-			}*/
+			continue;
 		}
 
 		if (decision >= .8)//place holder for next perk
 		{
-			/*if (other->client->pers.perkSteady)
-				continue;//restart loop
-			else
-			{
-				other->client->pers.perkSteady = true;
-				SetRespawn (ent, 45);
-				return true;
-			}*/
+			continue;
 		}
 	}
 	return false;
@@ -260,7 +249,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to 
 
 qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
 {
-	qboolean	changed = false;
+	qboolean	changed = false;//used to see if a perk was added
 	
 	//just in case
 	if(!ent) 
@@ -268,34 +257,41 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 	if(!other)
 		return false;
 	
-	if (!other->client->pers.perkSteady)
+	if (!other->client->pers.perkSteady)//if steady not on, turn it on, and let the player know they recieved it
 	{
 		other->client->pers.perkSteady = true;
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "STEADY\n");
 	}
-	else if(!other->client->pers.perkSilent)
+	else if(!other->client->pers.perkSilent)//if Steady already on, check for silent
 	{
 		other->client->pers.perkSilent = true;
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "SILENT\n");
 	}
-	else if (!other->client->pers.perkHardline)
+	else if (!other->client->pers.perkHardline)//if silent and steady already on, check for hardline
 	{
 		other->client->pers.perkHardline = true;
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
 	}
 
-	if (changed)
+	if (changed)//if perk added set respawn, pick up item, and end function
 	{	
 		SetRespawn (ent, 50);
 		return true;
 	}
 
-	gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");
-	return false;
+	gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");//if the function made it this far nothing was added so let the player know every perk is on
+	return false;//then end function without picking up item
 }
+
+/*
+===================================================
+perk pick up functions END
+===================================================
+*/
+
 void Drop_General (edict_t *ent, gitem_t *item)
 {
 	Drop_Item (ent, item);
