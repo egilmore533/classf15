@@ -278,17 +278,17 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "SILENT\n");
 	}
-	else if (!other->client->pers.perkHardline)//if silent and steady already on, check for hardline
-	{
-		other->client->pers.perkHardline = true;
-		changed = true;
-		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
-	}
 	else if (!other->client->pers.perkPower)
 	{
 		other->client->pers.perkPower = true;
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "POWER\n");
+	}
+	else if (!other->client->pers.perkHardline)//if silent and steady already on, check for hardline
+	{
+		other->client->pers.perkHardline = true;
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
 	}
 
 	if (changed)//if perk added set respawn, pick up item, and end function

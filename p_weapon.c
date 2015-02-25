@@ -780,6 +780,13 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 		radius_damage *= 4;
 	}
 
+	if (ent->client->pers.perkPower)
+	{
+		damage += 25;
+		radius_damage += 40;
+		damage_radius += 40;
+	}
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -848,6 +855,10 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 
 	if (is_quad)
 		damage *= 4;
+
+	if (ent->client->pers.perkPower)
+		damage += 5;
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
@@ -1029,6 +1040,12 @@ void Machinegun_Fire (edict_t *ent)
 		vspread /= 2;
 	}
 
+	if (ent->client->pers.perkPower)
+	{
+		kick += 2;
+		damage += 4;
+	}
+
 	for (i=1 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
@@ -1182,6 +1199,12 @@ void Chaingun_Fire (edict_t *ent)
 		vspread /= 2;
 	}
 
+	if (ent->client->pers.perkPower)
+	{
+		damage += 3;
+		kick += 2;
+	}
+
 	for (i=0 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
@@ -1260,11 +1283,16 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if(ent->client->pers.perkSteady)//if kick perk, then decrease the kick and spread
+	if(ent->client->pers.perkSteady)//if kick perk, then decrease the spread
 	{
-		kick /= 2;
 		hspread /= 2;
 		vspread /= 2;
+	}
+
+	if(ent->client->pers.perkPower)
+	{
+		kick += 4;
+		damage += 2;
 	}
 
 	if (deathmatch->value)
@@ -1324,6 +1352,12 @@ void weapon_supershotgun_fire (edict_t *ent)
 		kick /= 2;
 		hspread /= 2;
 		vspread /= 2;
+	}
+
+	if(ent->client->pers.perkPower)
+	{
+		kick += 6;
+		damage += 3;
 	}
 
 	v[PITCH] = ent->client->v_angle[PITCH];
@@ -1392,6 +1426,12 @@ void weapon_railgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	if(ent->client->pers.perkPower)
+	{
+		damage += 50;
+		kick += 100;
+	}
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
 	VectorScale (forward, -3, ent->client->kick_origin);
@@ -1403,7 +1443,7 @@ void weapon_railgun_fire (edict_t *ent)
 		{
 			VectorSet(offset, 0, -30 + i * 30, ent->viewheight-8);
 			P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-			fire_rail (ent, start, forward, 200, kick);//higher damage for titan Mode
+			fire_rail (ent, start, forward, damage+50, kick);//higher damage for titan Mode
 		}
 	}
 
@@ -1484,6 +1524,11 @@ void weapon_bfg_fire (edict_t *ent)
 
 	if (is_quad)
 		damage *= 4;
+
+	if(ent->client->pers.perkPower)
+	{
+		damage += 100;
+	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
