@@ -170,8 +170,9 @@ qboolean Pickup_Powerup (edict_t *ent, edict_t *other)
 perk pick ups
 ===================================================
 */
-qboolean Pickup_PerkHardline (edict_t *ent, edict_t *other)//allows the player to unlock titan mode after only 4 kills, lost after death
+qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//allows the player to unlock titan mode after only 4 kills, lost after death
 {
+	float		decision;
 
 	//just in case
 	if(!ent) 
@@ -179,55 +180,122 @@ qboolean Pickup_PerkHardline (edict_t *ent, edict_t *other)//allows the player t
 	if(!other)
 		return false;
 
-	if (other->client->pers.perkHardline)
-		return false;
-	else
+
+	if (other->client->pers.perkHardline && other->client->pers.perkSilent && other->client->pers.perkSteady)
 	{
-		other->client->pers.perkHardline = true;
-		SetRespawn (ent, 60);
-		return true;
+		gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");
+		return false;//if no perks left to take, don't pick it up
 	}
+
+	while (true)//repeats until a perk is added
+	{
+		decision = crandom();
+
+		if(decision <= .2)
+		{
+			if (other->client->pers.perkHardline)
+				decision += .19;
+			else
+			{
+				other->client->pers.perkHardline = true;
+				SetRespawn (ent, 1);
+				gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
+				return true;
+			}
+		}
+
+		if(decision >= .2 && decision < .4)
+		{
+			if (other->client->pers.perkSilent)
+				decision += .19;
+			else
+			{
+				other->client->pers.perkSilent = true;
+				SetRespawn (ent, 1);
+				gi.cprintf(other, PRINT_HIGH, "SILENT\n");
+				return true;
+			}
+		}
+
+	
+		if(decision >= .4 && decision < .6)
+		{
+			if (other->client->pers.perkSteady)
+				decision += .19;
+			else
+			{
+				other->client->pers.perkSteady = true;
+				SetRespawn (ent, 1);
+				gi.cprintf(other, PRINT_HIGH, "STEADY\n");
+				return true;
+			}
+		}
+
+		if (decision > .6 && decision < .8)//place holder for next perk
+		{
+			/*if (other->client->pers.perkSteady)
+				decision += .19;
+			else
+			{
+				other->client->pers.perkSteady = true;
+				SetRespawn (ent, 45);
+				return true;
+			}*/
+		}
+
+		if (decision >= .8)//place holder for next perk
+		{
+			/*if (other->client->pers.perkSteady)
+				continue;//restart loop
+			else
+			{
+				other->client->pers.perkSteady = true;
+				SetRespawn (ent, 45);
+				return true;
+			}*/
+		}
+	}
+	return false;
 }
 
-qboolean Pickup_PerkSilent (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
+qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
 {
-
+	qboolean	changed = false;
+	
 	//just in case
 	if(!ent) 
 		return false;
 	if(!other)
 		return false;
-
-	if (other->client->pers.perkSilent)
-		return false;
-	else
-	{
-		other->client->pers.perkSilent = true;
-		SetRespawn (ent, 45);
-		return true;
-	}
-}
-
-qboolean Pickup_PerkSteady (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
-{
-
-	//just in case
-	if(!ent) 
-		return false;
-	if(!other)
-		return false;
-
-	if (other->client->pers.perkSteady)
-		return false;
-	else
+	
+	if (!other->client->pers.perkSteady)
 	{
 		other->client->pers.perkSteady = true;
-		SetRespawn (ent, 30);
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "STEADY\n");
+	}
+	else if(!other->client->pers.perkSilent)
+	{
+		other->client->pers.perkSilent = true;
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "SILENT\n");
+	}
+	else if (!other->client->pers.perkHardline)
+	{
+		other->client->pers.perkHardline = true;
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
+	}
+
+	if (changed)
+	{	
+		SetRespawn (ent, 50);
 		return true;
 	}
+
+	gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");
+	return false;
 }
-
-
 void Drop_General (edict_t *ent, gitem_t *item)
 {
 	Drop_Item (ent, item);
@@ -1713,7 +1781,7 @@ always owned, never in the world
 */
 	{
 		"item_quad", 
-		Pickup_PerkHardline,//changed
+		Pickup_PerkRandom,//changed
 		NULL,//changed
 		Drop_General,
 		NULL,
@@ -1721,7 +1789,7 @@ always owned, never in the world
 		"models/items/quaddama/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"p_quad",
-/* pickup */	"Hardline",
+/* pickup */	"Random Perk Pickup",
 /* width */		2,
 		60,
 		NULL,
@@ -1876,7 +1944,7 @@ gives +1 to maximum health
 */
 	{
 		"item_bandolier",
-		Pickup_PerkSteady,
+		Pickup_Bandolier,
 		NULL,
 		NULL,
 		NULL,
@@ -1884,7 +1952,7 @@ gives +1 to maximum health
 		"models/items/band/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"p_bandolier",
-/* pickup */	"Steady",
+/* pickup */	"Bandolier",
 /* width */		2,
 		60,
 		NULL,
@@ -1899,7 +1967,7 @@ gives +1 to maximum health
 */
 	{
 		"item_pack",
-		Pickup_PerkSilent,//changed, to silent perk pick up
+		Pickup_PerkSequential,//changed, to silent perk pick up
 		NULL,
 		NULL,
 		NULL,
@@ -1907,7 +1975,7 @@ gives +1 to maximum health
 		"models/items/pack/tris.md2", EF_ROTATE,
 		NULL,
 /* icon */		"i_pack",
-/* pickup */	"Silent",//changed to display Silent instead of ammo pack
+/* pickup */	"Sequential Perk Pickup",//changed to display Silent instead of ammo pack
 /* width */		2,
 		180,
 		NULL,
