@@ -549,6 +549,12 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	if (is_quad)
 		damage *= 4;
 
+	if(ent->client->pers.perkPower)
+	{
+		damage += 25;
+		radius += 50;
+	}
+
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
@@ -711,6 +717,12 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	radius = damage+40;
 	if (is_quad)
 		damage *= 4;
+
+	if (ent->client->pers.perkPower)
+	{
+		damage += 20;
+		radius += 50;
+	}
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -1011,9 +1023,8 @@ void Machinegun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if (ent->client->pers.perkSteady)//if steady perk, half the kick and spread
+	if (ent->client->pers.perkSteady)//if steady perk, half the spread
 	{
-		kick /= 2;
 		hspread /= 2;
 		vspread /= 2;
 	}
@@ -1165,9 +1176,8 @@ void Chaingun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if (ent->client->pers.perkSteady)//if kick perk, then decrease the kick and spread
+	if (ent->client->pers.perkSteady)//if kick perk, then decrease the spread
 	{
-		kick /= 2;
 		hspread /= 2;
 		vspread /= 2;
 	}

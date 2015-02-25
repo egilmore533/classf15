@@ -617,6 +617,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.perkHardline = false;
 	client->pers.perkSilent = false;
 	client->pers.perkSteady = false;
+	client->pers.perkPower = false;
 
 	client->pers.killCount = killCounter;// save how many kills you had when you respawned
 }
@@ -1216,6 +1217,7 @@ void PutClientInServer (edict_t *ent)
 	client->pers.perkHardline = false;
 	client->pers.perkSilent = false;
 	client->pers.perkSteady = false;
+	client->pers.perkPower = false;
 
 	client->pers.killCount = client->resp.score;//set to number of kills when the player respawned
 

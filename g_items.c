@@ -213,7 +213,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else//add Silent perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkSilent = true;
-				SetRespawn (ent, 1);
+				SetRespawn (ent, 30);
 				gi.cprintf(other, PRINT_HIGH, "SILENT\n");
 				return true;
 			}
@@ -228,7 +228,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else//add Steady perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkSteady = true;
-				SetRespawn (ent, 1);
+				SetRespawn (ent, 30);
 				gi.cprintf(other, PRINT_HIGH, "STEADY\n");
 				return true;
 			}
@@ -236,7 +236,16 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 
 		if (decision > .6 && decision < .8)//place holder for next perk
 		{
-			continue;
+			if (other->client->pers.perkPower)
+				continue;
+
+			else
+			{
+				other->client->pers.perkPower = true;
+				SetRespawn (ent, 45);
+				gi.cprintf(other, PRINT_HIGH, "POWER\n");
+				return true;
+			}
 		}
 
 		if (decision >= .8)//place holder for next perk
@@ -274,6 +283,12 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 		other->client->pers.perkHardline = true;
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
+	}
+	else if (!other->client->pers.perkPower)
+	{
+		other->client->pers.perkPower = true;
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "POWER\n");
 	}
 
 	if (changed)//if perk added set respawn, pick up item, and end function
