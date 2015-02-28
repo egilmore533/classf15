@@ -176,7 +176,8 @@ MOVETYPE_STEP,			// gravity, special edge handling
 MOVETYPE_FLY,
 MOVETYPE_TOSS,			// gravity
 MOVETYPE_FLYMISSILE,	// extra size to monsters
-MOVETYPE_BOUNCE
+MOVETYPE_BOUNCE,
+MOVETYPE_FLYRICOCHET	// for the AntiTitan perk
 } movetype_t;
 
 
@@ -860,7 +861,7 @@ typedef struct
 	qboolean	perkSilent;/**<makes the player quieter during gameplay, basically the player is in sneak mode until they die*/
 	qboolean	perkSteady;/**<lowers the spread and kick for the shotguns, machineguns, chainguns, and super shotguns*/
 	qboolean	perkPower;/**<increases damage, kick, and radius for each gun that has any of these traits*/
-	qboolean	perk;
+	qboolean	perkAntiTitan;
 
 	/*
 	==========================================================================================================================

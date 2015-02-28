@@ -181,7 +181,9 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 		return false;
 
 
-	if (other->client->pers.perkHardline && other->client->pers.perkSilent && other->client->pers.perkSteady)//check if player has all perks
+	if (other->client->pers.perkHardline && other->client->pers.perkSilent && 
+		other->client->pers.perkSteady && other->client->pers.perkPower &&
+		other->client->pers.perkAntiTitan)//check if player has all perks
 	{
 		gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");
 		return false;//if no perks left to take, don't pick it up
@@ -250,7 +252,16 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 
 		if (decision >= .8)//place holder for next perk
 		{
-			continue;
+			if (other->client->pers.perkAntiTitan)
+				continue;
+
+			else
+			{
+				other->client->pers.perkAntiTitan = true;
+				SetRespawn (ent, 50);
+				gi.cprintf(other, PRINT_HIGH, "ANTI TITAN\n");
+				return true;
+			}
 		}
 	}
 	return false;
@@ -265,8 +276,14 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 		return false;
 	if(!other)
 		return false;
-	
-	if (!other->client->pers.perkSteady)//if steady not on, turn it on, and let the player know they recieved it
+
+	if (!other->client->pers.perkAntiTitan)//if silent and steady already on, check for hardline
+	{
+		other->client->pers.perkAntiTitan = true;
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "ANTI TITAN\n");
+	}
+	else if (!other->client->pers.perkSteady)//if steady not on, turn it on, and let the player know they recieved it
 	{
 		other->client->pers.perkSteady = true;
 		changed = true;
@@ -290,6 +307,12 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
 	}
+	/*if (!other->client->pers.perkAntiTitan)//if silent and steady already on, check for hardline
+	{
+		other->client->pers.perkAntiTitan = true;
+		changed = true;
+		gi.cprintf(other, PRINT_HIGH, "ANTI TITAN\n");
+	}*/
 
 	if (changed)//if perk added set respawn, pick up item, and end function
 	{	
