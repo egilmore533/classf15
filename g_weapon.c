@@ -556,9 +556,6 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	vec3_t		origin;
 	int			n;
 
-	if(other->client->pers.perkAntiTitan)
-		ent->movetype = MOVETYPE_FLYRICOCHET;
-
 	if (other == ent->owner)
 		return;
 
@@ -594,8 +591,6 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 
 	T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_R_SPLASH);
 
-	if(other->client->pers.perkAntiTitan)
-		return;
 	gi.WriteByte (svc_temp_entity);
 	if (ent->waterlevel)
 		gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);

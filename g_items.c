@@ -307,12 +307,6 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 		changed = true;
 		gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
 	}
-	/*if (!other->client->pers.perkAntiTitan)//if silent and steady already on, check for hardline
-	{
-		other->client->pers.perkAntiTitan = true;
-		changed = true;
-		gi.cprintf(other, PRINT_HIGH, "ANTI TITAN\n");
-	}*/
 
 	if (changed)//if perk added set respawn, pick up item, and end function
 	{	

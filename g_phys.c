@@ -683,8 +683,7 @@ void SV_Physics_Toss (edict_t *ent)
 
 // add gravity
 	if (ent->movetype != MOVETYPE_FLY
-	&& ent->movetype != MOVETYPE_FLYMISSILE
-	&& ent->movetype != MOVETYPE_FLYRICOCHET)
+	&& ent->movetype != MOVETYPE_FLYMISSILE)
 		SV_AddGravity (ent);
 
 // move angles
@@ -698,8 +697,6 @@ void SV_Physics_Toss (edict_t *ent)
 
 	if (trace.fraction < 1)
 	{
-		if (ent->movetype == MOVETYPE_FLYRICOCHET)
-			backoff = 2;
 		if (ent->movetype == MOVETYPE_BOUNCE)
 			backoff = 1.5;
 		else
@@ -711,7 +708,7 @@ void SV_Physics_Toss (edict_t *ent)
 			vectoangles (ent->velocity, ent->s.angles);
 		}
 	// stop if on ground
-		if (trace.plane.normal[2] > 0.7 && ent->movetype != MOVETYPE_FLYRICOCHET)
+		if (trace.plane.normal[2] > 0.7)
 		{		
 			if (ent->velocity[2] < 60 || ent->movetype != MOVETYPE_BOUNCE )
 			{
@@ -940,7 +937,6 @@ void G_RunEntity (edict_t *ent)
 	case MOVETYPE_BOUNCE:
 	case MOVETYPE_FLY:
 	case MOVETYPE_FLYMISSILE:
-	case MOVETYPE_FLYRICOCHET:
 		SV_Physics_Toss (ent);
 		break;
 	default:
