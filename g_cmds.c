@@ -880,13 +880,17 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
-void Cmd_Dodge_f (edict_t *ent)
+void Cmd_Thruster_f (edict_t *ent)
 {
 	vec3_t	forward;
+	if (ent->client->pers.fuel >= 30)
+	{
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorScale(forward, 500, forward);
+		VectorAdd(forward, ent->velocity, ent->velocity);
+		ent->client->pers.fuel -= 30;
+	}
 
-	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-	VectorScale(forward, 500, forward);
-	VectorAdd(forward, ent->velocity, ent->velocity);
 }
 
 /*
@@ -976,8 +980,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
-	else if (Q_stricmp(cmd, "dodge") == 0)
-		Cmd_Dodge_f (ent);
+	else if (Q_stricmp(cmd, "thruster") == 0)
+		Cmd_Thruster_f (ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

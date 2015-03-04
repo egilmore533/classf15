@@ -183,7 +183,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 
 	if (other->client->pers.perkHardline && other->client->pers.perkSilent && 
 		other->client->pers.perkSteady && other->client->pers.perkPower &&
-		other->client->pers.perkAntiTitan)//check if player has all perks
+		other->client->pers.perkThrusterEnhance)//check if player has all perks
 	{
 		gi.cprintf(other, PRINT_HIGH, "All perks are activated\n");
 		return false;//if no perks left to take, don't pick it up
@@ -252,14 +252,14 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 
 		if (decision >= .8)//place holder for next perk
 		{
-			if (other->client->pers.perkAntiTitan)
+			if (other->client->pers.perkThrusterEnhance)
 				continue;
 
 			else
 			{
-				other->client->pers.perkAntiTitan = true;
+				other->client->pers.perkThrusterEnhance = true;
 				SetRespawn (ent, 50);
-				gi.cprintf(other, PRINT_HIGH, "ANTI TITAN\n");
+				gi.cprintf(other, PRINT_HIGH, "MONSTEROUS THRUSTERS\n");
 				return true;
 			}
 		}
@@ -277,11 +277,11 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 	if(!other)
 		return false;
 
-	if (!other->client->pers.perkAntiTitan)//if silent and steady already on, check for hardline
+	if (!other->client->pers.perkThrusterEnhance)//if silent and steady already on, check for hardline
 	{
-		other->client->pers.perkAntiTitan = true;
+		other->client->pers.perkThrusterEnhance = true;
 		changed = true;
-		gi.cprintf(other, PRINT_HIGH, "ANTI TITAN\n");
+		gi.cprintf(other, PRINT_HIGH, "MONSTEROUS THRUSTERS\n");
 	}
 	else if (!other->client->pers.perkSteady)//if steady not on, turn it on, and let the player know they recieved it
 	{

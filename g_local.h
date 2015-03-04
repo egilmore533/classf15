@@ -861,7 +861,12 @@ typedef struct
 	qboolean	perkSilent;/**<makes the player quieter during gameplay, basically the player is in sneak mode until they die*/
 	qboolean	perkSteady;/**<lowers the spread and kick for the shotguns, machineguns, chainguns, and super shotguns*/
 	qboolean	perkPower;/**<increases damage, kick, and radius for each gun that has any of these traits*/
-	qboolean	perkAntiTitan;
+	qboolean	perkThrusterEnhance;/**<Increases the thruster pack max fuel and distance it boosts*/
+
+	//movement stuff
+	int			fuel;
+	int			max_fuel;
+	int			fuel_regen;
 
 	/*
 	==========================================================================================================================

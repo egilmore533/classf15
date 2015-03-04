@@ -619,6 +619,11 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.perkSteady = false;
 	client->pers.perkPower = false;
 
+	//stamina full when respawing
+	client->pers.fuel = 100;
+	client->pers.max_fuel = 100;
+	client->pers.fuel_regen = 1;
+
 	client->pers.killCount = killCounter;// save how many kills you had when you respawned
 }
 
@@ -1219,6 +1224,11 @@ void PutClientInServer (edict_t *ent)
 	client->pers.perkSteady = false;
 	client->pers.perkPower = false;
 
+	//stamina full when respawing
+	client->pers.fuel = 100;
+	client->pers.max_fuel = 100;
+	client->pers.fuel_regen = 1;
+
 	client->pers.killCount = client->resp.score;//set to number of kills when the player respawned
 
 	// set the delta angle
@@ -1806,6 +1816,26 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->client->newweapon = FindItem ("railgun");
 			ent->client->pers.inventory[ent->client->ammo_index] = 10;
 			
+		}
+	}
+
+	if (client->pers.perkThrusterEnhance)
+	{
+		if (ent->client->pers.fuel_regen = 1)
+		{
+			ent->client->pers.max_fuel = 200;
+			ent->client->pers.fuel_regen = 2;
+		}
+	}
+	if (ent->client->pers.max_fuel > ent->client->pers.fuel)
+	{
+		gi.centerprintf(ent, "Thruster Fuel: %i / %i\n",ent->client->pers.fuel,ent->client->pers.max_fuel);
+		ent->client->pers.fuel += ent->client->pers.fuel_regen;
+
+		/**<check to see if player has more than max stamina and sets it to max*/
+		if (ent->client->pers.fuel > ent->client->pers.max_fuel)
+		{
+			ent->client->pers.fuel = ent->client->pers.max_fuel;
 		}
 	}
 
