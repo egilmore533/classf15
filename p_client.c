@@ -1225,8 +1225,8 @@ void PutClientInServer (edict_t *ent)
 	client->pers.perkPower = false;
 
 	//stamina full when respawing
-	client->pers.fuel = 100;
-	client->pers.max_fuel = 100;
+	client->pers.fuel = 40;
+	client->pers.max_fuel = 40;
 	client->pers.fuel_regen = 1;
 
 	client->pers.killCount = client->resp.score;//set to number of kills when the player respawned
@@ -1818,12 +1818,24 @@ void ClientBeginServerFrame (edict_t *ent)
 			
 		}
 	}
-
+	/*if ((ent->velocity[0] < 200 && ent->velocity[0] > -200) 
+		&& (ent->velocity[1] < 200 && ent->velocity[1] > -200) 
+		&& (ent->velocity[2] < 200 && ent->velocity[2] > -200))
+	{
+		VectorScale(ent->velocity, 2, ent->velocity);
+	}
+	else
+	{
+		VectorScale(ent->velocity, 0, ent->velocity); 
+	}
+	VectorScale(ent->velocity, 1, ent->velocity);*/
+	gi.centerprintf(ent, "[0] = %f,	[1] = %f\n", ent->velocity[0], ent->velocity[1]);
+	//[2] up and down
 	if (client->pers.perkThrusterEnhance)
 	{
 		if (ent->client->pers.fuel_regen = 1)
 		{
-			ent->client->pers.max_fuel = 200;
+			ent->client->pers.max_fuel = 100;
 			ent->client->pers.fuel_regen = 2;
 		}
 	}

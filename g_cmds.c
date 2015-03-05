@@ -883,6 +883,9 @@ void Cmd_PlayerList_f(edict_t *ent)
 void Cmd_Thruster_f (edict_t *ent)
 {
 	vec3_t	forward;
+	int		ThrustVelocity;
+
+	//if(ent->velocity[])
 	if (ent->client->pers.fuel >= 30)
 	{
 		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
