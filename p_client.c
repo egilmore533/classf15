@@ -1632,7 +1632,20 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
 
-		client->ps.pmove.gravity = sv_gravity->value;
+		if (ent->client->pers.jetPack)
+		{
+			ent->client->pers.jetPackTime--;
+			if (ent->client->pers.jetPackTime <= 0)
+			{
+				ent->client->pers.jetPack = false;
+				gi.centerprintf(ent,"Going Down");
+			}
+			client->ps.pmove.gravity = 0;
+		}
+		else 
+		{
+			client->ps.pmove.gravity = sv_gravity->value;
+		}
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
@@ -1809,6 +1822,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		{
 			ent->max_health = 500;
 			ent->health = 500;
+			gi.soundindex("tank/tnkatck5.wav");
 			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
 			ent->client->newweapon = FindItem ("Rocket Launcher");//change to rockets/railgun
 			//for rocket launcher "Rocket Launcher", for railgun "railgun"
@@ -1829,7 +1843,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		VectorScale(ent->velocity, 0, ent->velocity); 
 	}
 	VectorScale(ent->velocity, 1, ent->velocity);*/
-	gi.centerprintf(ent, "[0] = %f,	[1] = %f\n", ent->velocity[0], ent->velocity[1]);
+	//gi.centerprintf(ent, "[0] = %f,	[1] = %f\n", ent->velocity[0], ent->velocity[1]);
 	//[2] up and down
 	if (client->pers.perkThrusterEnhance)
 	{
