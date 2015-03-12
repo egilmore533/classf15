@@ -177,7 +177,6 @@ MOVETYPE_FLY,
 MOVETYPE_TOSS,			// gravity
 MOVETYPE_FLYMISSILE,	// extra size to monsters
 MOVETYPE_BOUNCE,
-MOVETYPE_FLYRICOCHET	// for the AntiTitan perk
 } movetype_t;
 
 
@@ -867,6 +866,8 @@ typedef struct
 	int			fuel;
 	int			max_fuel;
 	int			fuel_regen;
+
+	int			jumpCount;
 
 	qboolean	jetPack;
 	int			jetPackTime;

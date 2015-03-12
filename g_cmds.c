@@ -898,10 +898,19 @@ void Cmd_Thruster_f (edict_t *ent)
 
 void Cmd_JetPack_f (edict_t *ent)
 {
-	gi.cprintf(ent, PRINT_HIGH ,"Up, up, and away!");
-	ent->client->pers.jetPack = true;
-	ent->client->pers.jetPackTime = 600;
-	ent->velocity[2] += 1;
+	if(ent->client->pers.jetPack)
+	{
+		ent->client->pers.jetPack = false;
+	}
+
+	else if (!ent->client->pers.jetPack)
+	{
+		if (ent->client->pers.fuel > 5)
+		{
+			ent->client->pers.jetPack = true;
+			ent->velocity[2] += 80;
+		}
+	}
 }
 
 /*

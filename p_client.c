@@ -1634,8 +1634,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		if (ent->client->pers.jetPack)
 		{
-			ent->client->pers.jetPackTime--;
-			if (ent->client->pers.jetPackTime <= 0)
+			ent->client->pers.fuel--;
+			if (ent->client->pers.fuel <= 0)
 			{
 				ent->client->pers.jetPack = false;
 				gi.centerprintf(ent,"Going Down");
@@ -1752,22 +1752,28 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			} else
 				GetChaseTarget(ent);
 
-		} else if (!client->weapon_thunk) {
+		} 
+		else if (!client->weapon_thunk) 
+		{
 			client->weapon_thunk = true;
 			Think_Weapon (ent);
 		}
 	}
 
-	if (client->resp.spectator) {
-		if (ucmd->upmove >= 10) {
-			if (!(client->ps.pmove.pm_flags & PMF_JUMP_HELD)) {
+	if (client->resp.spectator) 
+	{
+		if (ucmd->upmove >= 10) 
+		{
+			if (!(client->ps.pmove.pm_flags & PMF_JUMP_HELD)) 
+			{
 				client->ps.pmove.pm_flags |= PMF_JUMP_HELD;
 				if (client->chase_target)
 					ChaseNext(ent);
 				else
 					GetChaseTarget(ent);
 			}
-		} else
+		} 
+		else
 			client->ps.pmove.pm_flags &= ~PMF_JUMP_HELD;
 	}
 
@@ -1829,7 +1835,6 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->client->pers.inventory[ent->client->ammo_index] = 10;
 			ent->client->newweapon = FindItem ("railgun");
 			ent->client->pers.inventory[ent->client->ammo_index] = 10;
-			
 		}
 	}
 	/*if ((ent->velocity[0] < 200 && ent->velocity[0] > -200) 
@@ -1850,7 +1855,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		if (ent->client->pers.fuel_regen = 1)
 		{
 			ent->client->pers.max_fuel = 100;
-			ent->client->pers.fuel_regen = 2;
+			ent->client->pers.fuel_regen = 1;
 		}
 	}
 	if (ent->client->pers.max_fuel > ent->client->pers.fuel)

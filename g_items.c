@@ -191,7 +191,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 
 	while (true)//repeats until a perk is added
 	{
-		decision = crandom();//random number between 0 and 1
+		decision = crandom();
 
 		if(decision <= .2)
 		{

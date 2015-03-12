@@ -727,9 +727,29 @@ void G_SetClientEffects (edict_t *ent)
 {
 	int		pa_type;
 	int		remaining;
+	float	randomShellColor;
 
 	ent->s.effects = 0;
 	ent->s.renderfx = 0;
+
+	if(ent->client->pers.titanMode)
+	{
+		randomShellColor = crandom();
+		ent->s.effects |= EF_COLOR_SHELL;
+
+		if (randomShellColor <= .333)
+		{
+			ent->s.renderfx |= RF_SHELL_GREEN;
+		}
+		if (randomShellColor > .333 && randomShellColor <= .666)
+		{
+			ent->s.renderfx |= RF_SHELL_RED;
+		}
+		if (randomShellColor > .666)
+		{
+			ent->s.renderfx |= RF_SHELL_BLUE;
+		}
+	}
 
 	if (ent->health <= 0 || level.intermissiontime)
 		return;

@@ -703,10 +703,7 @@ void SV_Physics_Toss (edict_t *ent)
 			backoff = 1;
 
 		ClipVelocity (ent->velocity, trace.plane.normal, ent->velocity, backoff);
-		if (ent->movetype == MOVETYPE_FLYRICOCHET)
-		{
-			vectoangles (ent->velocity, ent->s.angles);
-		}
+
 	// stop if on ground
 		if (trace.plane.normal[2] > 0.7)
 		{		
