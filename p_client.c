@@ -1829,12 +1829,11 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->max_health = 500;
 			ent->health = 500;
 			gi.soundindex("tank/tnkatck5.wav");
-			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");
-			ent->client->newweapon = FindItem ("Rocket Launcher");//change to rockets/railgun
+			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");//change to rockets/railgun
 			//for rocket launcher "Rocket Launcher", for railgun "railgun"
-			ent->client->pers.inventory[ent->client->ammo_index] = 10;
 			ent->client->newweapon = FindItem ("railgun");
-			ent->client->pers.inventory[ent->client->ammo_index] = 10;
+			//ent->client->pers.inventory[index] += FindItem("railgun");
+			ent->client->pers.inventory[ent->client->ammo_index] = 1;
 		}
 	}
 	/*if ((ent->velocity[0] < 200 && ent->velocity[0] > -200) 
