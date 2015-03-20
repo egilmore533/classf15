@@ -906,8 +906,27 @@ void Cmd_JumpJet_f (edict_t *ent)
 		VectorScale(up, thrustVelocity, up);
 		VectorAdd(up, ent->velocity, ent->velocity);
 		ent->client->pers.fuel = 0;
-		gi.cprintf(ent, PRINT_HIGH, "WHOA!\n");
 	}
+
+}
+
+void Cmd_DoubleJump_f (edict_t *ent)
+{
+	vec3_t up;
+	int jumpHeight = 300;
+
+	if (ent->client->pers.doubleJump > 0)
+	{
+		AngleVectors(ent->client->v_angle, NULL, NULL, up);
+		VectorScale(up, jumpHeight, up);
+		VectorAdd(up, ent->velocity, ent->velocity);
+		ent->client->pers.doubleJump--;
+	}
+	else
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Out of Jumps!\n");
+	}
+	
 
 }
 
@@ -1021,6 +1040,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_JetPack_f (ent);
 	else if (Q_stricmp(cmd, "jumpjet") == 0)
 		Cmd_JumpJet_f (ent);
+	else if (Q_stricmp(cmd, "doublejump") == 0)
+		Cmd_DoubleJump_f (ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

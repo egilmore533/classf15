@@ -867,10 +867,10 @@ typedef struct
 	int			max_fuel;
 	int			fuel_regen;
 
-	int			jumpCount;
+	int			doubleJump;
 
 	qboolean	jetPack;
-	int			jetPackTime;
+	
 	/*
 	==========================================================================================================================
 	*/

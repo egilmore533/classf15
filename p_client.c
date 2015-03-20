@@ -619,10 +619,12 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.perkSteady = false;
 	client->pers.perkPower = false;
 
-	//stamina full when respawing
-	client->pers.fuel = 100;
-	client->pers.max_fuel = 100;
+	//fuel full when respawing
+	client->pers.fuel = 40;
+	client->pers.max_fuel = 40;
 	client->pers.fuel_regen = 1;
+
+	client->pers.doubleJump = 2;
 
 	client->pers.killCount = killCounter;// save how many kills you had when you respawned
 }
@@ -1228,6 +1230,8 @@ void PutClientInServer (edict_t *ent)
 	client->pers.fuel = 40;
 	client->pers.max_fuel = 40;
 	client->pers.fuel_regen = 1;
+
+	client->pers.doubleJump = 2;
 
 	client->pers.killCount = client->resp.score;//set to number of kills when the player respawned
 
@@ -1836,19 +1840,12 @@ void ClientBeginServerFrame (edict_t *ent)
 			ent->client->pers.inventory[ent->client->ammo_index] = 1;
 		}
 	}
-	/*if ((ent->velocity[0] < 200 && ent->velocity[0] > -200) 
-		&& (ent->velocity[1] < 200 && ent->velocity[1] > -200) 
-		&& (ent->velocity[2] < 200 && ent->velocity[2] > -200))
+
+	if (ent->groundentity && ent->client->pers.doubleJump < 2)
 	{
-		VectorScale(ent->velocity, 2, ent->velocity);
+		ent->client->pers.doubleJump = 2;
 	}
-	else
-	{
-		VectorScale(ent->velocity, 0, ent->velocity); 
-	}
-	VectorScale(ent->velocity, 1, ent->velocity);*/
-	//gi.centerprintf(ent, "[0] = %f,	[1] = %f\n", ent->velocity[0], ent->velocity[1]);
-	//[2] up and down
+
 	if (client->pers.perkThrusterEnhance)
 	{
 		if (ent->client->pers.fuel_regen = 1)
