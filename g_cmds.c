@@ -883,15 +883,30 @@ void Cmd_PlayerList_f(edict_t *ent)
 void Cmd_Thruster_f (edict_t *ent)
 {
 	vec3_t	forward;
-	int		ThrustVelocity;
 
-	//if(ent->velocity[])
 	if (ent->client->pers.fuel >= 30)
 	{
 		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
 		VectorScale(forward, 500, forward);
 		VectorAdd(forward, ent->velocity, ent->velocity);
 		ent->client->pers.fuel -= 30;
+	}
+
+}
+
+void Cmd_JumpJet_f (edict_t *ent)
+{
+	vec3_t up;
+	int thrustVelocity;
+
+	if(ent->client->pers.fuel >= (ent->client->pers.max_fuel / 2))
+	{
+		thrustVelocity = 10 * ent->client->pers.fuel;
+		AngleVectors(ent->client->v_angle, NULL, NULL, up);
+		VectorScale(up, thrustVelocity, up);
+		VectorAdd(up, ent->velocity, ent->velocity);
+		ent->client->pers.fuel = 0;
+		gi.cprintf(ent, PRINT_HIGH, "WHOA!\n");
 	}
 
 }
@@ -1004,6 +1019,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Thruster_f (ent);
 	else if (Q_stricmp(cmd, "jetpack") == 0)
 		Cmd_JetPack_f (ent);
+	else if (Q_stricmp(cmd, "jumpjet") == 0)
+		Cmd_JumpJet_f (ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
