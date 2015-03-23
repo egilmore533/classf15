@@ -201,7 +201,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else//add Hardline perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkHardline = true;
-				SetRespawn (ent, 60);
+				SetRespawn (ent, 15);
 				gi.cprintf(other, PRINT_HIGH, "HARDLINE\n");
 				return true;
 			}
@@ -215,7 +215,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else//add Silent perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkSilent = true;
-				SetRespawn (ent, 30);
+				SetRespawn (ent, 15);
 				gi.cprintf(other, PRINT_HIGH, "SILENT\n");
 				return true;
 			}
@@ -230,7 +230,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else//add Steady perk, set respawn, let the player know what perk they recieved, pick up the item, and end the function
 			{
 				other->client->pers.perkSteady = true;
-				SetRespawn (ent, 30);
+				SetRespawn (ent, 15);
 				gi.cprintf(other, PRINT_HIGH, "STEADY\n");
 				return true;
 			}
@@ -244,7 +244,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else
 			{
 				other->client->pers.perkPower = true;
-				SetRespawn (ent, 45);
+				SetRespawn (ent, 15);
 				gi.cprintf(other, PRINT_HIGH, "POWER\n");
 				return true;
 			}
@@ -258,7 +258,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			else
 			{
 				other->client->pers.perkThrusterEnhance = true;
-				SetRespawn (ent, 50);
+				SetRespawn (ent, 15);
 				gi.cprintf(other, PRINT_HIGH, "MONSTEROUS THRUSTERS\n");
 				return true;
 			}
@@ -310,7 +310,7 @@ qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less
 
 	if (changed)//if perk added set respawn, pick up item, and end function
 	{	
-		SetRespawn (ent, 50);
+		SetRespawn (ent, 15);
 		return true;
 	}
 
