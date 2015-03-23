@@ -886,6 +886,7 @@ void Cmd_Thruster_f (edict_t *ent)
 
 	if (ent->client->pers.fuel >= 30)
 	{
+		gi.sound(ent, CHAN_VOICE, gi.soundindex ("weapons/ROCKLF1A.WAV"), 1, ATTN_NORM, 0);
 		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
 		VectorScale(forward, 500, forward);
 		VectorAdd(forward, ent->velocity, ent->velocity);
@@ -899,13 +900,13 @@ void Cmd_JumpJet_f (edict_t *ent)
 	vec3_t up;
 	int thrustVelocity;
 
-	if(ent->client->pers.fuel >= (ent->client->pers.max_fuel / 2))
+	if(ent->client->pers.fuel >= 20)
 	{
+		gi.sound(ent, CHAN_VOICE, gi.soundindex ("weapons/ROCKLF1A.WAV"), 1, ATTN_NORM, 0);
 		thrustVelocity = 10 * ent->client->pers.fuel;
-		AngleVectors(ent->client->v_angle, NULL, NULL, up);
-		VectorScale(up, thrustVelocity, up);
-		VectorAdd(up, ent->velocity, ent->velocity);
+		ent->velocity[2] += thrustVelocity;
 		ent->client->pers.fuel = 0;
+
 	}
 
 }
@@ -917,10 +918,9 @@ void Cmd_DoubleJump_f (edict_t *ent)
 
 	if (ent->client->pers.doubleJump > 0)
 	{
-		AngleVectors(ent->client->v_angle, NULL, NULL, up);
-		VectorScale(up, jumpHeight, up);
-		VectorAdd(up, ent->velocity, ent->velocity);
 		ent->client->pers.doubleJump--;
+		ent->velocity[2] += jumpHeight;
+		gi.sound (ent, CHAN_VOICE, gi.soundindex ("player/male/jump1.wav"), 1, ATTN_NORM, 0);
 	}
 	else
 	{
@@ -935,6 +935,7 @@ void Cmd_JetPack_f (edict_t *ent)
 	if(ent->client->pers.jetPack)
 	{
 		ent->client->pers.jetPack = false;
+		gi.sound (ent, CHAN_WEAPON, gi.soundindex ("weapons/noammo.wav"), 1, ATTN_NORM, 0);
 	}
 
 	else if (!ent->client->pers.jetPack)
@@ -942,7 +943,6 @@ void Cmd_JetPack_f (edict_t *ent)
 		if (ent->client->pers.fuel > 5)
 		{
 			ent->client->pers.jetPack = true;
-			ent->velocity[2] += 80;
 		}
 	}
 }

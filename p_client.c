@@ -1614,6 +1614,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		return;
 	}
 
+	if(ent->client->pers.jetPack)
+	{
+		gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/rockfly.WAV"), 1, ATTN_NORM, 0);
+	}
+	
+
 	pm_passent = ent;
 
 	if (ent->client->chase_target) {
@@ -1642,7 +1648,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			if (ent->client->pers.fuel <= 0)
 			{
 				ent->client->pers.jetPack = false;
-				gi.centerprintf(ent,"Going Down");
+				gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/noammo.wav"), 1, ATTN_NORM, 0);
 			}
 			client->ps.pmove.gravity = 0;
 		}
@@ -1832,7 +1838,7 @@ void ClientBeginServerFrame (edict_t *ent)
 		{
 			ent->max_health = 500;
 			ent->health = 500;
-			gi.soundindex("tank/tnkatck5.wav");
+			gi.sound (ent, CHAN_VOICE, gi.soundindex("tank/tnkatck5.wav"), 1, ATTN_NORM, 0);
 			gi.cprintf(ent, PRINT_HIGH, "Titan Mode On\n");//change to rockets/railgun
 			//for rocket launcher "Rocket Launcher", for railgun "railgun"
 			ent->client->newweapon = FindItem ("railgun");
