@@ -236,6 +236,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 			}
 		}
 
+		//what does this mean?
 		if (decision > .6 && decision < .8)//place holder for next perk
 		{
 			if (other->client->pers.perkPower)
@@ -252,6 +253,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 
 		if (decision >= .8)//place holder for next perk
 		{
+			//might want to use brackets
 			if (other->client->pers.perkThrusterEnhance)
 				continue;
 
@@ -267,6 +269,7 @@ qboolean Pickup_PerkRandom (edict_t *ent, edict_t *other)//Randomly Selects perk
 	return false;
 }
 
+//good comments
 qboolean Pickup_PerkSequential (edict_t *ent, edict_t *other)//player makes less noise in the game, like when they pick up ammo/health, or jump into water, lost after death
 {
 	qboolean	changed = false;//used to see if a perk was added
